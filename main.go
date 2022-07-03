@@ -11,7 +11,7 @@ type Post struct {
 	Nmae string `json:"name"`
 }
 
-func main() {
+func getPokemon() Post {
 	resp, err := http.Get("https://pokeapi.co/api/v2/pokemon/10")
 	if err != nil {
 		panic(err)
@@ -29,7 +29,12 @@ func main() {
 		panic(err)
 	}
 
+	return post
+}
+
+func main() {
 	// fmt.Println(resp.Status)
 	// fmt.Println(string(body))
+	post := getPokemon()
 	fmt.Println(post)
 }
