@@ -4,8 +4,14 @@ import (
 	"testing"
 )
 
-func BenchmarkGetPokemon(b *testing.B) {
+func BenchmarkGetAllPokemon(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		getAllPokemon()
+	}
+}
+
+func BenchmarkAsyncGetAllPokemon(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		asyncGetAllPokemon()
 	}
 }
