@@ -25,7 +25,7 @@ func asyncRequest(url string, c chan []byte) {
 	c <- body
 }
 
-func AsyncGetPokemon(number int, c chan model.Pokemon) {
+func ParaGetPokemon(number int, pokeChan chan model.Pokemon) {
 	url := conf.POKEMON_API + strconv.Itoa(number)
 	ch := make(chan []byte)
 	go asyncRequest(url, ch)
@@ -37,5 +37,5 @@ func AsyncGetPokemon(number int, c chan model.Pokemon) {
 	}
 
 	// APIから取得したデータをチャネルに格納
-	c <- pokemon
+	pokeChan <- pokemon
 }
