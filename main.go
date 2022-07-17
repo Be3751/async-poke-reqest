@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/be3/async-poke-reqest/conf"
 	myhttp "github.com/be3/async-poke-reqest/http"
 	"github.com/be3/async-poke-reqest/model"
+	"github.com/be3/async-poke-reqest/util"
 )
 
 func getAllPokemon() {
@@ -53,29 +55,31 @@ func paraGetAllPokemon() {
 	fmt.Println("-------------------")
 }
 
-func measurer(fnc func()) time.Duration {
-	fmt.Println("Let's get started to capture all pokemons!")
-	start := time.Now()
-	fnc()
-	end := time.Now()
-	return end.Sub(start)
-}
-
 func main() {
 	flag.Parse()
-	flag := flag.Arg(0)
+	flags := flag.Args()
 
-	var duration time.Duration
+	// 並列処理か逐次処理のどちらかを指定するオプション
+	option := flags[0]
+	// 実行回数
+	N, err := strconv.Atoi(flags[1])
+	if err != nil {
+		AtoiError := fmt.Errorf("tried to convert string %s into int value but an error occured: %w", flags[1], err)
+		fmt.Println(AtoiError)
+		os.Exit(1)
+	}
 
-	switch flag {
+	var avgRuntime time.Duration
+
+	switch option {
 	case "p":
-		duration = measurer(paraGetAllPokemon)
+		avgRuntime = util.CalcAvgRuntime(paraGetAllPokemon, N)
 	case "s":
-		duration = measurer(getAllPokemon)
+		avgRuntime = util.CalcAvgRuntime(getAllPokemon, N)
 	default:
 		fmt.Println("Invalid flag! Use 'p' or 's' as a flag.")
 		return
 	}
 
-	fmt.Printf("It took %s.\n", duration)
+	fmt.Printf("It took %s on average.\n", avgRuntime)
 }
